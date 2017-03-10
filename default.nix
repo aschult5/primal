@@ -11,7 +11,7 @@ stdenv.mkDerivation rec {
    '';
 
    buildPhase = ''
-      ${gcc}/bin/g++ -std=c++14 -I${boost163}/include primal.cxx -o primal
+      ${gcc}/bin/g++ -std=c++14 -Iinclude/ src/primal.cxx -o primal -lboost_program_options
    '';
 
    installPhase = ''
