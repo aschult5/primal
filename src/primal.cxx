@@ -1,21 +1,13 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
-#include <cstdint>   //uint64_t
+#include <cstdint>   //uint16_t
 #include <string>
 
-#include <boost/multiprecision/miller_rabin.hpp>
 #include <boost/program_options.hpp>
 
-#include "utils.hpp"
-//#include "server.hpp"
-
-// TODO: move this out
-static bool isPrimal(big n)
-{
-   using namespace boost::multiprecision;
-   return miller_rabin_test(n, 25);
-}
+#include "server.hpp"
+#include "client.hpp"
 
 
 using namespace std;
@@ -54,13 +46,14 @@ bool collectNumbers(po::variables_map vm, vector<big>& numbers)
 
 int main(int argc, char const *argv[])
 {
-   po::options_description desc("Options:");
+   uint16_t port = 1734; // User Port for "Camber Corporation License Management"
+   po::options_description desc("Clients must specify the server ip and numbers to test");
    desc.add_options()
       ("help,h", "Print this message")
       ("file,f", po::value<string>(), "Client: File containing big integers to test")
       ("num,n", po::value<big>(), "Client: Big integer to test")
-      //("port,p", po::value<uint16_t>(), "Client/Server: Server's port")
       //("ip,i", po::value<string>(), "Client: Specify the target server IP address")
+      //("port,p", po::value<uint16_t>(), "Client/Server: Server's port")
       ;
 
    // Read command-line arguments
@@ -74,28 +67,22 @@ int main(int argc, char const *argv[])
       return 0;
    }
 
+
    // Client
-   if (vm.count("ip") || vm.count("num") || vm.count("file"))
+   if (vm.count("num") || vm.count("file") || vm.count("ip"))
    {
+      string ip = "127.0.0.1";
+      if (vm.count("ip"))
+      {
+         ip = vm["ip"].as<string>();
+      }
       vector<big> numbers;
       if (!collectNumbers(vm, numbers))
          return 1;
-      //return startClient(ip, port, numbers);
-
-      // TODO: move this out
-      for (auto const& num: numbers)
-      {
-         cout << num << " is ";
-         if (isPrimal(num))
-            cout << "PRIME" << endl;
-         else
-            cout << "not prime" << endl;
-      }
-      return 0;
+      return startClient(ip, port, numbers) ? 0 : 1;
    }
 
-   // Server
-   //return startServer(port);
 
-   return 0;
+   // Server
+   return startServer(port) ? 0 : 1;
 }
