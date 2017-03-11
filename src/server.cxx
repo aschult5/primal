@@ -1,14 +1,13 @@
 #include <array>
-
-#include <boost/multiprecision/miller_rabin.hpp>
+#include <iostream>
 #include <boost/asio.hpp>
 
 #include "server.hpp"
+#include "miller_rabin.hpp"
 
 static bool primalTest(big n)
 {
-   using namespace boost::multiprecision;
-   return miller_rabin_test(n, 25);
+   return custom::miller_rabin_test(n);
 }
 
 
