@@ -54,14 +54,12 @@ static unsigned int numTrials(const I& n, const std::vector<J> & pseudoPrimes)
 // Below is a derivation of boost's miller-rabin implementation.
 // Their use of a uniform_int_distribution precluded
 // my use of it in its original form.
-template <class I>
-bool miller_rabin_test(const I& n)
+bool miller_rabin_test(const big& n)
 {
    using namespace boost::multiprecision;
-   typedef I number_type;
 
    // list of first n primes
-   static const std::vector<uint32_t> primes = {
+   static const std::vector<big> primes = {
       2, 3, 5,
       7, 11,13,
       17,19,23,
@@ -82,8 +80,8 @@ bool miller_rabin_test(const I& n)
    if(bit_test(n, 0) == 0)
       return false;  // n is even
 
-   number_type nm1 = n - 1;
-   number_type q(n-1), y;
+   big nm1 = n - 1;
+   big q(n-1), y;
 
    unsigned k = lsb(q);
    q >>= k;
