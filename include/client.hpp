@@ -14,10 +14,7 @@ public:
    client() = delete;
    client(std::string ip, uint16_t port);
 
-   bool test(const std::vector<big>& numbers) { return sendRequest(request(numbers)); }
-
-private:
-   bool sendRequest(request&&);
+   bool sendRequest(const request& numbers);
 };
 
 } //namespace

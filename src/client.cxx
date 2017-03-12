@@ -16,7 +16,7 @@ client::client(string ip, uint16_t port) :
 }
 
 
-bool client::sendRequest(request&& req)
+bool client::sendRequest(const request& req)
 {
    boost::system::error_code ec;
 

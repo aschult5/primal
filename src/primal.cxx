@@ -82,7 +82,7 @@ int main(int argc, char const *argv[])
       if (!collectNumbers(vm, numbers))
          return 1;
       client c(ip, port);
-      c.test(move(numbers));
+      c.sendRequest(numbers);
    }
    else
    {
