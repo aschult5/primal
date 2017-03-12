@@ -32,9 +32,6 @@ bool client::sendRequest(const request& req, response& res)
    write(sock, buffer(req), ec);
    if (check(ec))
       return false;
-   write(sock, buffer(request(1,sentinel)), ec);
-   if (check(ec))
-      return false;
 
    // Read response
    read(sock, buffer(res), ec);

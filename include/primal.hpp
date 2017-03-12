@@ -11,7 +11,6 @@ namespace primal
 using big = uint64_t;
 using request = std::vector<big>;
 using response = std::vector<uint8_t>;
-static const big sentinel{0};
 
 
 inline bool check(const boost::system::error_code& ec)
