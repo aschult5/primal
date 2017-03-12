@@ -6,7 +6,7 @@ using namespace std;
 using namespace primal;
 
 client::client(string ip, uint16_t port) :
-   connection(port)
+   sock(io_serv)
 {
    ip::tcp::resolver resolver(io_serv);
    ip::tcp::resolver::query query(ip, to_string(port));
@@ -15,6 +15,12 @@ client::client(string ip, uint16_t port) :
    connect(sock, endpoint_it);
 }
 
+client::~client()
+{
+   boost::system::error_code ignore;
+   sock.shutdown(ip::tcp::socket::shutdown_both, ignore);
+   sock.close(ignore);
+}
 
 bool client::sendRequest(const request& req, response& res)
 {
@@ -25,18 +31,15 @@ bool client::sendRequest(const request& req, response& res)
    // Send request
    write(sock, buffer(req), ec);
    if (check(ec))
-   {
-      close();
       return false;
-   }
+   write(sock, buffer(request(1,sentinel)), ec);
+   if (check(ec))
+      return false;
 
    // Read response
    read(sock, buffer(res), ec);
    if (check(ec))
-   {
-      close();
       return false;
-   }
 
    return true;
 }

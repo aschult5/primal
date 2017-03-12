@@ -36,7 +36,7 @@ namespace custom {
 namespace detail {
 
 template<class I, class J>
-static unsigned int numTrials(const I& n, const std::vector<J> & pseudoPrimes)
+static unsigned int numTrials(I n, const std::vector<J> & pseudoPrimes)
 {
    // Binary search for first pseudoprime larger than n.
    // If we run miller-rabin with the first i primes as bases,

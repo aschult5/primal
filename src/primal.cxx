@@ -103,7 +103,6 @@ int main(int argc, char const *argv[])
    {
       // Server
       server s(port);
-      s.listen();
    }
 
    return 0;
