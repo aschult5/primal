@@ -2,7 +2,7 @@
 #include <boost/asio.hpp>
 #include "client.hpp"
 
-bool startClient(std::string ip, uint16_t port, const std::vector<big>& numbers)
+bool startClient(std::string ip, uint16_t port, const std::vector<uint64_t>& numbers)
 {
    using namespace boost::asio;
    using namespace std;
@@ -19,7 +19,7 @@ bool startClient(std::string ip, uint16_t port, const std::vector<big>& numbers)
    {
       // write server
       boost::system::error_code error;
-      array<big, 1> data{num};
+      array<uint64_t, 1> data{num};
       array<uint8_t, 1> result{0};
 
       write(sock, buffer(data));
@@ -40,5 +40,8 @@ bool startClient(std::string ip, uint16_t port, const std::vector<big>& numbers)
       else
          cout << "not prime" << endl;
    }
+
+   sock.shutdown(ip::tcp::socket::shutdown_both);
+   sock.close();
    return true;
 }

@@ -1,5 +1,5 @@
 Clients must specify the server ip and numbers to test:
   -h [ --help ]         Print this message
-  -f [ --file ] arg     Client: File containing big integers to test
+  -f [ --file ] arg     Client: File containing integers to test
   -n [ --num ] arg      Client: Big integer to test
 

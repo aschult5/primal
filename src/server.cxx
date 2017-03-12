@@ -3,52 +3,74 @@
 #include <boost/asio.hpp>
 
 #include "server.hpp"
+#include "interface.hpp"
 #include "miller_rabin.hpp"
 
-static bool primalTest(big n)
+using namespace Primal;
+using namespace boost::asio;
+using namespace std;
+
+static bool primalTest(uint64_t n)
 {
    return custom::miller_rabin_test(n);
 }
 
-
-bool startServer(uint16_t port)
+void Server::respond(bool result)
 {
-   using namespace boost::asio;
-   using namespace std;
-
-   io_service io_serv;
-   ip::tcp::acceptor acceptor(io_serv, ip::tcp::endpoint(ip::tcp::v4(), port));
-
-   while(1)
+   boost::system::error_code error;
+   // Form a response and send it
+   Response resp(1,result);
+   write(sock, buffer(resp), error);
+   if (error)
    {
-      ip::tcp::socket sock(io_serv);
+      if (error != error::eof) //Connection closed
+         cerr << error.message() << endl;
+      return; 
+   }
+}
 
-      cout << "Listening on port " << port << endl;
-      acceptor.accept(sock);
+void Server::handleRequest()
+{
+   boost::system::error_code error;
+   // Read the request
+   Request req(1);
+   read(sock, buffer(req), error);
+   if (error)
+   {
+      if (error != error::eof) //Connection closed
+         cerr << error.message() << endl;
+      sock.shutdown(boost::asio::ip::tcp::socket::shutdown_both);
+      sock.close();
+      return;
+   }
 
-      while (sock.is_open())
-      {
-         // Received connection
-         boost::system::error_code error;
-         array<big, 1> input;
-         read(sock, buffer(input), error);
-         if (error == boost::asio::error::eof)
-         {
-            sock.close();
-            break; //Connection closed
-         }
-         else if (error)
-         {
-            throw boost::system::system_error(error);
-         }
+   // Determine if the input is prime.
+   // Inform the client.
+   respond(primalTest(req.front()));
+}
 
-         // Determine if the input is prime
-         array<uint8_t, 1> result{0};
-         if (primalTest(input.front()))
-            result.at(0) = 1;
-         // Inform the client
-         write(sock, buffer(result));
-      }
+bool Server::listen()
+{
+   acceptor.accept(sock);
+
+   while (sock.is_open())
+   {
+      // Received connection
+      handleRequest();
    }
    return true;
 }
+
+// void Server::stop()
+// {
+//    try
+//    {
+//       sock.shutdown(boost::asio::ip::tcp::socket::shutdown_both);
+//       sock.close();
+//    }
+//    catch (std::exception& e)
+//    {
+//       std::cerr << "Failed to stop:" << std::endl;
+//       std::cerr << e.what() << std::endl;
+//    }
+// }

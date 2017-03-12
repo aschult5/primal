@@ -4,8 +4,6 @@
 #include <string>
 #include <vector>
 
-#include "server.hpp" // big
-
-bool startClient(std::string ip, uint16_t port, const std::vector<big>& numbers);
+bool startClient(std::string ip, uint16_t port, const std::vector<uint64_t>& numbers);
 
 #endif
