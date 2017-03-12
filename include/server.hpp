@@ -1,29 +1,24 @@
 #ifndef __SERVER_HPP__
 #define __SERVER_HPP__ 
 
-#include <boost/asio.hpp>
-#include <cstdint>
+#include <cstdint>   //uint16_t
+#include "primal.hpp"
 
-namespace Primal
+namespace primal
 {
 
-class Server
+class server : public connection
 {
 public:
-   Server(uint16_t port) :
-      sock(io_serv),
-      acceptor(io_serv, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), port)) 
-      {}
+   server() = delete;
+   server(uint16_t port);
+
    bool listen();
    // void stop();
 
 private:
    void handleRequest();
    void respond(bool);
-
-   boost::asio::io_service io_serv;
-   boost::asio::ip::tcp::socket sock;
-   boost::asio::ip::tcp::acceptor acceptor;
 };
 
 } //namespace

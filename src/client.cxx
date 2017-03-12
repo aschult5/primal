@@ -1,47 +1,50 @@
 #include <iostream>
-#include <boost/asio.hpp>
 #include "client.hpp"
 
-bool startClient(std::string ip, uint16_t port, const std::vector<uint64_t>& numbers)
+using namespace boost::asio;
+using namespace std;
+using namespace primal;
+
+client::client(string ip, uint16_t port) :
+   connection(port)
 {
-   using namespace boost::asio;
-   using namespace std;
-
-   io_service io_serv;
    ip::tcp::resolver resolver(io_serv);
-   ip::tcp::socket sock(io_serv);
-
    ip::tcp::resolver::query query(ip, to_string(port));
+
    auto endpoint_it = resolver.resolve(query);
-
    connect(sock, endpoint_it);
-   for (auto const& num: numbers)
+}
+
+
+bool client::sendRequest(request&& req)
+{
+   boost::system::error_code ec;
+
+   // Send request
+   write(sock, buffer(req), ec);
+   if (check(ec))
    {
-      // write server
-      boost::system::error_code error;
-      array<uint64_t, 1> data{num};
-      array<uint8_t, 1> result{0};
+      close();
+      return false;
+   }
 
-      write(sock, buffer(data));
-      read(sock, buffer(result), error);
-      if (error == boost::asio::error::eof)
-      {
-         //Connection closed
-         break;
-      }
-      else if (error)
-      {
-         throw boost::system::system_error(error);
-      }
+   // Read response
+   response resp(req.size());
+   read(sock, buffer(resp), ec);
+   if (check(ec))
+   {
+      close();
+      return false;
+   }
 
-      cout << num << " is ";
-      if (result.front() == 1)
+   for (unsigned i=0; i<resp.size(); ++i)
+   {
+      cout << req[i] << " is ";
+      if (resp[i] == 1)
          cout << "PRIME" << endl;
       else
          cout << "not prime" << endl;
    }
 
-   sock.shutdown(ip::tcp::socket::shutdown_both);
-   sock.close();
-   return true;
+   return true;;
 }

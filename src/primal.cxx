@@ -6,21 +6,23 @@
 
 #include <boost/program_options.hpp>
 
+#include "primal.hpp" //big
 #include "server.hpp"
 #include "client.hpp"
 
 
 using namespace std;
+using namespace primal;
 namespace po = boost::program_options;
 
-bool collectNumbers(po::variables_map vm, vector<uint64_t>& numbers)
+bool collectNumbers(po::variables_map vm, vector<big>& numbers)
 {
    // Must be exception-safe
    // Bad user-input will throw
 
    if (vm.count("num"))
    {
-      numbers.push_back(vm["num"].as<uint64_t>());
+      numbers.push_back(vm["num"].as<big>());
    }
    if (vm.count("file"))
    {
@@ -34,7 +36,7 @@ bool collectNumbers(po::variables_map vm, vector<uint64_t>& numbers)
          return false;
       }
 
-      uint64_t num;
+      big num;
       while (input >> num)
       {
          numbers.push_back(num);
@@ -50,8 +52,8 @@ int main(int argc, char const *argv[])
    po::options_description desc("Clients must specify the server ip and numbers to test");
    desc.add_options()
       ("help,h", "Print this message")
-      ("file,f", po::value<string>(), "Client: File containing uint64_t integers to test")
-      ("num,n", po::value<uint64_t>(), "Client: Big integer to test")
+      ("file,f", po::value<string>(), "Client: File containing integers to test")
+      ("num,n", po::value<big>(), "Client: Integer to test")
       //("ip,i", po::value<string>(), "Client: Specify the target server IP address")
       //("port,p", po::value<uint16_t>(), "Client/Server: Server's port")
       ;
@@ -67,24 +69,27 @@ int main(int argc, char const *argv[])
       return 0;
    }
 
-
    if (vm.count("num") || vm.count("file") || vm.count("ip"))
    {
       // Client
-      string ip = "127.0.0.1";
+      string ip("127.0.0.1");
       if (vm.count("ip"))
       {
          ip = vm["ip"].as<string>();
       }
-      vector<uint64_t> numbers;
+
+      vector<big> numbers;
       if (!collectNumbers(vm, numbers))
          return 1;
-      return startClient(ip, port, numbers) ? 0 : 1;
+      client c(ip, port);
+      c.test(move(numbers));
    }
    else
    {
       // Server
-      Primal::Server s(port);
-      return s.listen() ? 0 : 1;
+      server s(port);
+      s.listen();
    }
+
+   return 0;
 }
