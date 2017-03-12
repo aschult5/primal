@@ -15,7 +15,7 @@ using namespace std;
 using namespace primal;
 namespace po = boost::program_options;
 
-bool collectNumbers(po::variables_map vm, vector<big>& numbers)
+static bool formRequest(po::variables_map vm, request& numbers)
 {
    // Must be exception-safe
    // Bad user-input will throw
@@ -78,11 +78,26 @@ int main(int argc, char const *argv[])
          ip = vm["ip"].as<string>();
       }
 
-      vector<big> numbers;
-      if (!collectNumbers(vm, numbers))
+      // Form request
+      request numbers;
+      if (!formRequest(vm, numbers))
          return 1;
+
+      // Send request, retrieve result
       client c(ip, port);
-      c.sendRequest(numbers);
+      response result(numbers.size());
+      if (!c.sendRequest(numbers, result))
+         return 2;
+
+      // Print result
+      for (unsigned i=0; i<result.size(); ++i)
+      {
+         cout << numbers[i] << " is ";
+         if (result[i] == 1)
+            cout << "PRIME" << endl;
+         else
+            cout << "not prime" << endl;
+      }
    }
    else
    {

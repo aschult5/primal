@@ -16,9 +16,11 @@ client::client(string ip, uint16_t port) :
 }
 
 
-bool client::sendRequest(const request& req)
+bool client::sendRequest(const request& req, response& res)
 {
    boost::system::error_code ec;
+   if (req.size() != res.size())
+      return false;
 
    // Send request
    write(sock, buffer(req), ec);
@@ -29,22 +31,12 @@ bool client::sendRequest(const request& req)
    }
 
    // Read response
-   response resp(req.size());
-   read(sock, buffer(resp), ec);
+   read(sock, buffer(res), ec);
    if (check(ec))
    {
       close();
       return false;
    }
 
-   for (unsigned i=0; i<resp.size(); ++i)
-   {
-      cout << req[i] << " is ";
-      if (resp[i] == 1)
-         cout << "PRIME" << endl;
-      else
-         cout << "not prime" << endl;
-   }
-
-   return true;;
+   return true;
 }

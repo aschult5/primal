@@ -14,7 +14,7 @@ public:
    client() = delete;
    client(std::string ip, uint16_t port);
 
-   bool sendRequest(const request& numbers);
+   bool sendRequest(const request&, response&);
 };
 
 } //namespace

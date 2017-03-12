@@ -14,7 +14,6 @@ public:
    server(uint16_t port);
 
    bool listen();
-   // void stop();
 
 private:
    void handleRequest();
