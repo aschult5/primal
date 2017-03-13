@@ -1,5 +1,2 @@
-Clients must specify the server ip and numbers to test:
-  -h [ --help ]         Print this message
-  -f [ --file ] arg     Client: File containing integers to test
-  -n [ --num ] arg      Client: Big integer to test
+[![Build Status](https://travis-ci.org/aschult5/primal.svg?branch=master)](https://travis-ci.org/aschult5/primal)
 
