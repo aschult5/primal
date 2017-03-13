@@ -1,5 +1,5 @@
 AM_CPPFLAGS = $(BOOST_CPPFLAGS)
-AM_CXXFLAGS = --pedantic -Wall -Werror
+AM_CXXFLAGS = -Wall -Werror
 AM_LDFLAGS = $(BOOST_LDFLAGS)
 
 bin_PROGRAMS = primal

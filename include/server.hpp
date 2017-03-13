@@ -48,9 +48,10 @@ private:
 class server
 {
 public:
+   static uint128_t hugePseudoprime; //TODO find a better place for this
    server() = delete;
 
-   explicit server(uint16_t port);
+   server(uint16_t port, uint128_t pseudoprime=0);
 
    // No copying
    server(const server&) = delete;

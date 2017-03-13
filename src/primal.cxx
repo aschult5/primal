@@ -55,6 +55,7 @@ int main(int argc, char const *argv[])
       ("file,f", po::value<string>(), "Client: File containing integers to test")
       ("num,n", po::value<big>(), "Client: Integer to test")
       ("ip,i", po::value<string>(), "Client: Specify the target server IP address. Default: 127.0.0.1")
+      ("pseudoprime", po::value<uint128_t>(), "Server: Specify 318665857834031151167461 for 128bit support")
       //("port,p", po::value<uint16_t>(), "Client/Server: Server's port")
       ;
 
@@ -128,10 +129,15 @@ int main(int argc, char const *argv[])
    }
    else
    {
+      uint128_t pp=0;
+      if (vm.count("pseudoprime"))
+      {
+         pp=vm["pseudoprime"].as<uint128_t>();
+      }
       // Server
       try
       {
-         server s(port);
+         server s(port,pp);
       }
       catch (std::exception& e)
       {

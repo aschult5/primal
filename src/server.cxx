@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include <functional>   //bind
+#include <fstream>
 
 #include "server.hpp"
 #include "miller_rabin.hpp"
@@ -35,7 +36,7 @@ void connection::readHandler(const error_code& ec, size_t bytes)
    if (!check(ec))
    {
       // Determine if the input is prime.
-      respond(custom::miller_rabin_test(number.front()));
+      respond(custom::miller_rabin_test(number.front(), server::hugePseudoprime));
 
       // clients may send multiple requests
       handleRequest(); 
@@ -51,11 +52,12 @@ void connection::respond(custom::primality result)
    check(ec);
 }
 
+uint128_t server::hugePseudoprime=0;
 
-
-server::server(uint16_t port) :
+server::server(uint16_t port, uint128_t pseudoprime) :
    acceptor(io_serv, ip::tcp::endpoint(ip::tcp::v4(), port))
 {
+   hugePseudoprime = pseudoprime;
    listen();
    io_serv.run();
 }

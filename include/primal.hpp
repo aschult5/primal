@@ -4,13 +4,14 @@
 #include <vector>
 #include <cstdint>
 #include <boost/asio.hpp>
+#include <boost/multiprecision/cpp_int.hpp>
 
-#include "miller_rabin.hpp" //smelly, but need response value type for interface
+#include "miller_rabin.hpp" //smelly, but need M-R response value type
 
 namespace primal
 {
 
-using big = uint64_t;
+using big = boost::multiprecision::uint128_t;
 using request = std::vector<big>;
 using response = std::vector<custom::primality>;
 
