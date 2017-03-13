@@ -89,8 +89,8 @@ Inputs to batch mode are either a file or an integer passed on startup.
 Interactive mode allows you to manually test new cases, before they're automated.
 
 
-## Why require a specific command-line argument to have 64-bit & 128-bit support?
-GCC does not support 128bit integer literals. It has to be input somehow, and user-input is the easiest.
+## Why am I passing a magic number?
+GCC does not support 128bit integer literals. It has to be input somehow, and user-input is the easiest. Don't betray primal's trust.
 
 ## How it works
 ### Primality Testing
