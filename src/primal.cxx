@@ -60,7 +60,15 @@ int main(int argc, char const *argv[])
 
    // Read command-line arguments
    po::variables_map vm;
-   po::store(po::parse_command_line(argc, argv, desc), vm);
+   try
+   {
+      po::store(po::parse_command_line(argc, argv, desc), vm);
+   }
+   catch (std::exception& e)
+   {
+      cerr << e.what() << endl;
+      return 1;
+   }
    po::notify(vm);
 
    if (vm.count("help"))
