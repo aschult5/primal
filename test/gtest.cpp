@@ -3,36 +3,26 @@
 #include <cstdint>
 
 #include "miller_rabin.hpp"
-#include "primal.hpp"
 
 
-
-TEST(MillerRabin, 32bitPrime)
+//
+//MillerRabin
+//
+TEST(MillerRabinTest, 32bitPrime)
 {
-   uint32_t n{4294293967u};
-
-   ASSERT_EQ(true, custom::miller_rabin_test(n));
+   EXPECT_EQ(true, custom::miller_rabin_test(static_cast<uint32_t>(4294293967u)));
 }
-
-TEST(MillerRabin, 32bitComposite)
+TEST(MillerRabinTest, 32bitComposite)
 {
-   uint64_t n{4294293968u};
-
-   ASSERT_EQ(false, custom::miller_rabin_test(n));
+   EXPECT_EQ(false, custom::miller_rabin_test(static_cast<uint32_t>(4294293968u)));
 }
-
-TEST(MillerRabin, 64bitPrime)
+TEST(MillerRabinTest, 64bitPrime)
 {
-   uint64_t n{18446744073709551557u};
-
-   ASSERT_EQ(true, custom::miller_rabin_test(n));
+   EXPECT_EQ(true, custom::miller_rabin_test(static_cast<uint64_t>(18446744073709551557u)));
 }
-
-TEST(MillerRabin, 64bitComposite)
+TEST(MillerRabinTest, 64bitComposite)
 {
-   uint64_t n{18446744073709551558u};
-
-   ASSERT_EQ(false, custom::miller_rabin_test(n));
+   EXPECT_EQ(false, custom::miller_rabin_test(static_cast<uint64_t>(18446744073709551558u)));
 }
 
 int main(int argc, char **argv) {

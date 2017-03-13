@@ -45,7 +45,7 @@ void connection::readHandler(const error_code& ec, size_t bytes)
 void connection::respond(bool result)
 {
    error_code ec;
-   response res(1,result?1:0);
+   response res{result ? uint8_t{1} : uint8_t{0}};
 
    write(sock, buffer(res), ec);
    check(ec);

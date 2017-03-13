@@ -54,7 +54,7 @@ int main(int argc, char const *argv[])
       ("help,h", "Print this message")
       ("file,f", po::value<string>(), "Client: File containing integers to test")
       ("num,n", po::value<big>(), "Client: Integer to test")
-      ("ip,i", po::value<string>(), "Client: Specify the target server IP address")
+      ("ip,i", po::value<string>(), "Client: Specify the target server IP address. Default: 127.0.0.1")
       //("port,p", po::value<uint16_t>(), "Client/Server: Server's port")
       ;
 
