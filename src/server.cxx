@@ -26,26 +26,24 @@ connection::~connection()
 
 void connection::handleRequest()
 {
-   // Read the request
-   request req(1);
-   while (sock.is_open())
-   {
-      error_code ec;
-      read(sock, buffer(req), ec);
-      if (check(ec))
-         break;
-      
-      // Determine if the input is prime.
-      respond(custom::miller_rabin_test(req.front()));
-   }
+   // Read the request asynchronously while the server takes more connections
+   async_read(sock, buffer(number), std::bind(&connection::readHandler,shared_from_this(),_1,_2));
 }
 
 void connection::readHandler(const error_code& ec, size_t bytes)
 {
    if (!ec)
-      handleRequest(); // clients may send multiple requests
+   {
+      // Determine if the input is prime.
+      respond(custom::miller_rabin_test(number.front()));
+
+      // clients may send multiple requests
+      handleRequest(); 
+   }
    else
+   {
       check(ec);
+   }
 }
 
 void connection::respond(bool result)

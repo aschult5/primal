@@ -23,7 +23,7 @@ class connection : public std::enable_shared_from_this<connection>
 {
 public:
    connection() = delete;
-   connection(boost::asio::io_service& io_serv) : sock(io_serv) {}
+   connection(boost::asio::io_service& io_serv) : sock(io_serv), number(1) {}
    ~connection();
 
    connection(const connection&) = delete;
@@ -37,6 +37,7 @@ private:
    void readHandler(const boost::system::error_code&, size_t);
 
    boost::asio::ip::tcp::socket sock;
+   request number;
 };
 
 //
