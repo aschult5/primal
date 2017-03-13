@@ -80,6 +80,14 @@ Type white-space-separated integers to test, followed by enter:
 7 is PRIME
 ```
 
+## Testing
+googletest is used for unit testing. `make check` or `nix-build --arg doCheck true` will build and run gtest.
+
+Batch mode allows you to specify many integers to test in one connection.
+Inputs to batch mode are either a file or an integer passed on startup.
+
+Interactive mode allows you to manually test new cases, before they're automated.
+
 
 ## Why require a specific command-line argument to have 64-bit & 128-bit support?
 GCC does not support 128bit integer literals. It has to be input somehow, and user-input is the easiest.
