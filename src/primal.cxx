@@ -43,7 +43,7 @@ static bool formRequest(po::variables_map vm, request& numbers)
       }
    }
 
-   return true;
+   return !numbers.empty();
 }
 
 int main(int argc, char const *argv[])
@@ -54,7 +54,7 @@ int main(int argc, char const *argv[])
       ("help,h", "Print this message")
       ("file,f", po::value<string>(), "Client: File containing integers to test")
       ("num,n", po::value<big>(), "Client: Integer to test")
-      //("ip,i", po::value<string>(), "Client: Specify the target server IP address")
+      ("ip,i", po::value<string>(), "Client: Specify the target server IP address")
       //("port,p", po::value<uint16_t>(), "Client/Server: Server's port")
       ;
 
@@ -81,22 +81,24 @@ int main(int argc, char const *argv[])
       // Form request
       request numbers;
       if (!formRequest(vm, numbers))
+      {
+         cerr << desc << endl;
          return 1;
+      }
+      response result(numbers.size());
 
       // Send request, retrieve result
       try
       {
          client c(ip, port);
+         if (!c.sendRequest(numbers, result))
+            return 3;
       }
       catch (std::exception& e)
       {
          cerr << e.what() << endl;
          return 2;
       }
-
-      response result(numbers.size());
-      if (!c.sendRequest(numbers, result))
-         return 3;
 
       // Print result
       for (unsigned i=0; i<result.size(); ++i)
