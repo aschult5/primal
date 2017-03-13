@@ -35,7 +35,7 @@ void connection::handleRequest()
 // Called when async_read completes
 void connection::readHandler(const error_code& ec, size_t bytes)
 {
-   if (!check(ec))
+   if (!check(ec) && bytes > 0)
    {
       // Determine if the input is prime.
       respond(custom::primality_test(number.front(), server::hugePseudoprime));

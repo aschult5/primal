@@ -117,6 +117,8 @@ primality primality_test(const I& n, boost::multiprecision::uint128_t hugePseudo
       pseudoPrimes.push_back(hugePseudoprime);
    }
 
+   if (n <= 1)
+      return primality::NOT;
    if (n == 2)
       return primality::GUARANTEED;  // Trivial special case.
    if(bit_test(n, 0) == 0)
