@@ -81,8 +81,8 @@ Type white-space-separated integers to test, followed by enter:
 ```
 
 
-## Why Require an integer literal to have 64-bit & 128-bit support?
-GCC does not support 128bit integer literals.
+## Why require a specific command-line argument to have 64-bit & 128-bit support?
+GCC does not support 128bit integer literals. It has to be input somehow, and user-input is the easiest.
 
 ## How it works
 ### Primality Testing
