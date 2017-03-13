@@ -15,6 +15,7 @@ public:
    client(std::string ip, uint16_t port);
    ~client();
 
+   // No copying
    client(const client&) = delete;
    client& operator=(const client&) = delete;
 

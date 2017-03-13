@@ -32,7 +32,7 @@ void connection::handleRequest()
 
 void connection::readHandler(const error_code& ec, size_t bytes)
 {
-   if (!ec)
+   if (!check(ec))
    {
       // Determine if the input is prime.
       respond(custom::miller_rabin_test(number.front()));
@@ -40,16 +40,12 @@ void connection::readHandler(const error_code& ec, size_t bytes)
       // clients may send multiple requests
       handleRequest(); 
    }
-   else
-   {
-      check(ec);
-   }
 }
 
 void connection::respond(bool result)
 {
    error_code ec;
-   response res(1,result);
+   response res(1,result?1:0);
 
    write(sock, buffer(res), ec);
    check(ec);
@@ -77,5 +73,5 @@ void server::handleAccept(std::shared_ptr<connection> newConnection, const error
    else
       newConnection->handleRequest();
 
-   listen();
+   listen(); //forever
 }

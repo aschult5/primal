@@ -84,10 +84,19 @@ int main(int argc, char const *argv[])
          return 1;
 
       // Send request, retrieve result
-      client c(ip, port);
+      try
+      {
+         client c(ip, port);
+      }
+      catch (std::exception& e)
+      {
+         cerr << e.what() << endl;
+         return 2;
+      }
+
       response result(numbers.size());
       if (!c.sendRequest(numbers, result))
-         return 2;
+         return 3;
 
       // Print result
       for (unsigned i=0; i<result.size(); ++i)
@@ -102,7 +111,15 @@ int main(int argc, char const *argv[])
    else
    {
       // Server
-      server s(port);
+      try
+      {
+         server s(port);
+      }
+      catch (std::exception& e)
+      {
+         cerr << e.what() << endl;
+         return 2;
+      }
    }
 
    return 0;

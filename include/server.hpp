@@ -23,9 +23,11 @@ class connection : public std::enable_shared_from_this<connection>
 {
 public:
    connection() = delete;
-   connection(boost::asio::io_service& io_serv) : sock(io_serv), number(1) {}
+
+   explicit connection(boost::asio::io_service& io_serv) : sock(io_serv), number(1) {}
    ~connection();
 
+   // No copying
    connection(const connection&) = delete;
    connection& operator=(const connection&) = delete;
    
@@ -47,8 +49,10 @@ class server
 {
 public:
    server() = delete;
-   server(uint16_t port);
 
+   explicit server(uint16_t port);
+
+   // No copying
    server(const server&) = delete;
    server& operator=(const server&) = delete;
 
