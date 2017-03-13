@@ -14,8 +14,6 @@
 #include <vector>
 #include <algorithm>
 
-using uint128_t = boost::multiprecision::uint128_t;
-
 
 namespace custom {
 
@@ -26,10 +24,12 @@ enum class primality : uint8_t
    GUARANTEED
 };
 
+
 namespace detail {
 
-template<class I, class J>
-static unsigned int numTrials(I n, const std::vector<J> & pseudoPrimes)
+template<class I, class J,
+   typename = std::enable_if<sizeof(J) >= sizeof(I) > >
+static unsigned int numTrials(const I& n, const std::vector<J> & pseudoPrimes)
 {
    // Binary search for first pseudoprime larger than n.
    // If we run miller-rabin with the first i primes as bases,
@@ -41,25 +41,72 @@ static unsigned int numTrials(I n, const std::vector<J> & pseudoPrimes)
 } //detail namespace
 
 
-// Below is a derivation of boost's miller-rabin implementation.
+// Below is a derivation of boost's miller-rabin primality test.
 // Their use of a uniform_int_distribution precluded
 // my use of it in its original form.
-template<typename big>
-primality miller_rabin_test(const big& n, uint128_t hugePseudoprime=0)
+// I want to specify the bases used.
+template<typename I>
+primality miller_rabin_test(const I& n, unsigned trials)
 {
    using namespace boost::multiprecision;
- 
-   // list of first n primes
-   static const std::vector<big> primes{
+   
+   static const std::vector<I> primes{
       2, 3, 5,
       7, 11,13,
       17,19,23,
       29,31,37
    };
+
+   if (primes.size() < trials || trials == 0)
+      return primality::NOT;
+
+   //
+   // The Miller-Rabin algorithm is not described here
+   //
+   I nm1 = n - 1;
+   I q(n-1), y;
+
+   unsigned k = lsb(q);
+   q >>= k;
+
+
+   auto x = primes.begin();
+   for(unsigned i = 0; i < trials; ++i, ++x)
+   {
+      y = powm(*x, q, n);
+      I j = 0;
+      while(true)
+      {
+         if(y == nm1)
+            break;
+         if(y == 1)
+         {
+            if(j == 0)
+               break;
+            return primality::NOT;
+         }
+         if(++j == k)
+            return primality::NOT;
+         y = powm(y, 2, n);
+      }
+   }
+
+   // Due to our use of the first 'trials' primes as bases,
+   // we can guarantee primality
+   return primality::GUARANTEED;
+}
+
+template<typename I>
+primality primality_test(const I& n, boost::multiprecision::uint128_t hugePseudoprime=0)
+{
+   using namespace boost::multiprecision;
+ 
+   // list of first n primes
+
    // Smallest possible pseudoprime if <=i primes tested as base
    //   in miller-rabin.  i starts at 1
    // See: http://oeis.org/A014233
-   static std::vector<uint128_t> pseudoPrimes{
+   static std::vector<boost::multiprecision::uint128_t> pseudoPrimes{
       2047,                1373653,             25326001,
       3215031751,          2152302898747,       3474749660383,
       341550071728321,     341550071728321,     3825123056546413051,
@@ -75,12 +122,6 @@ primality miller_rabin_test(const big& n, uint128_t hugePseudoprime=0)
    if(bit_test(n, 0) == 0)
       return primality::NOT;  // n is even
 
-   big nm1 = n - 1;
-   big q(n-1), y;
-
-   unsigned k = lsb(q);
-   q >>= k;
-
    // Too large to guarantee prime
    if (n >= pseudoPrimes.back())
    {
@@ -89,31 +130,12 @@ primality miller_rabin_test(const big& n, uint128_t hugePseudoprime=0)
       else
          return primality::NOT;
    }
-
-   // We can guarantee prime if we use
-   // the first 'trials' primes as bases
-   auto x = primes.begin();
-   auto trials = detail::numTrials(n, pseudoPrimes);
-   for(unsigned i = 0; i < trials; ++i, ++x)
+   else
    {
-      y = powm(*x, q, n);
-      big j = 0;
-      while(true)
-      {
-         if(y == nm1)
-            break;
-         if(y == 1)
-         {
-            if(j == 0)
-               break;
-            return primality::NOT; // test failed
-         }
-         if(++j == k)
-            return primality::NOT; // failed
-         y = powm(y, 2, n);
-      }
+      return custom::miller_rabin_test(n, detail::numTrials(n, pseudoPrimes));
    }
-   return primality::GUARANTEED;  // Yeheh! prime.
+
+
 }
 
 } //custom namespace

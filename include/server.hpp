@@ -48,7 +48,7 @@ private:
 class server
 {
 public:
-   static uint128_t hugePseudoprime; //TODO find a better place for this
+   static uint128_t hugePseudoprime;
    server() = delete;
 
    server(uint16_t port, uint128_t pseudoprime=0);

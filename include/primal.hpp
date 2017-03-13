@@ -11,14 +11,19 @@
 namespace primal
 {
 
-using big = boost::multiprecision::uint128_t;
+using uint128_t = boost::multiprecision::uint128_t;
+
+// big identifies the max bit width supported
+using big = uint128_t;
 using request = std::vector<big>;
 using response = std::vector<custom::primality>;
 
 
+// Returns whether ec contains an error
 inline bool check(const boost::system::error_code& ec)
 {
-   if (ec && ec != boost::asio::error::eof && ec != boost::asio::error::connection_reset)
+   //  eof == connection gracefully closed
+   if (ec && ec != boost::asio::error::eof)
       std::cerr << ec.message() << std::endl;
    return ec;
 }

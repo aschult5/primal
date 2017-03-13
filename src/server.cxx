@@ -20,6 +20,7 @@ using std::placeholders::_2;
 
 connection::~connection()
 {
+   // Close the socket cleanly
    error_code ignore;
    sock.shutdown(ip::tcp::socket::shutdown_both, ignore);
    sock.close(ignore);
@@ -31,12 +32,13 @@ void connection::handleRequest()
    async_read(sock, buffer(number), std::bind(&connection::readHandler,shared_from_this(),_1,_2));
 }
 
+// Called when async_read completes
 void connection::readHandler(const error_code& ec, size_t bytes)
 {
    if (!check(ec))
    {
       // Determine if the input is prime.
-      respond(custom::miller_rabin_test(number.front(), server::hugePseudoprime));
+      respond(custom::primality_test(number.front(), server::hugePseudoprime));
 
       // clients may send multiple requests
       handleRequest(); 
