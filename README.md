@@ -6,9 +6,9 @@ Primal is a server-client application that tests the [Primality] of an integer.
 
 ## Building
 ### Dependencies
-C++ compiler with C++14 support
-Boost 1.63.0
-googletest
+* C++ compiler with C++14 support
+* Boost 1.63.0
+* googletest
 
 ### nix
 [nix] is the recommended (and well-tested) method, as it will fulfill dependencies, build, and install, all in isolation.
