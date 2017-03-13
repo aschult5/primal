@@ -80,6 +80,9 @@ Type white-space-separated integers to test, followed by enter:
 7 is PRIME
 ```
 
+### Why am I passing a magic number?
+GCC does not support 128bit integer literals. It has to be input somehow, and user-input is the easiest. Don't betray primal's trust.
+
 ## Testing
 googletest is used for unit testing. `make check` or `nix-build --arg doCheck true` will build and run gtest.
 
@@ -89,15 +92,13 @@ Inputs to batch mode are either a file or an integer passed on startup.
 Interactive mode allows you to manually test new cases, before they're automated.
 
 
-## Why am I passing a magic number?
-GCC does not support 128bit integer literals. It has to be input somehow, and user-input is the easiest. Don't betray primal's trust.
-
 ## How it works
 ### Primality Testing
 See [A014233]
 
-Using the first n primes as bases for the Miller-Rabin test, you can determine whether a integer is prime or not
-with confidence, up to a certain value. The code does a binary search in the list of pseudoprimes for the integer to test to determine if it's eligible for the guaranteed algorithm.
+Using the first n primes as bases for the Miller-Rabin test, you can determine whether an integer is prime or not, up to a certain value.
+The code does a binary search in the list of pseudoprimes for the integer to test to determine if it's eligible for the guaranteed algorithm,
+otherwise it's passed onto boost::multiprecision::miller_rabin_test with 25 trials.
 
 | n | Prime | Smallest Possible Pseudoprime if <=nth primes tested as base |
 | ------ | ------ | ------ |
