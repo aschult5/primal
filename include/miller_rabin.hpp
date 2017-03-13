@@ -42,10 +42,7 @@ static unsigned int numTrials(I n, const std::vector<J> & pseudoPrimes)
    // If we run miller-rabin with the first i primes as bases,
    // we can guarantee that it's prime (or not).
    auto bound = upper_bound(pseudoPrimes.begin(), pseudoPrimes.end(), static_cast<J>(n));
-   if (bound == pseudoPrimes.end())
-      return pseudoPrimes.size();
-   else
-      return bound - pseudoPrimes.begin() + 1;
+   return bound - pseudoPrimes.begin() + 1;
 }
 
 } //detail namespace
@@ -54,25 +51,26 @@ static unsigned int numTrials(I n, const std::vector<J> & pseudoPrimes)
 // Below is a derivation of boost's miller-rabin implementation.
 // Their use of a uniform_int_distribution precluded
 // my use of it in its original form.
-bool miller_rabin_test(const uint64_t& n)
+template<typename big>
+bool miller_rabin_test(const big& n)
 {
    using namespace boost::multiprecision;
-
+ 
    // list of first n primes
-   static const std::vector<uint64_t> primes = {
+   static const std::vector<big> primes{
       2, 3, 5,
       7, 11,13,
       17,19,23,
-      29,31//,37
+      29,31,37
    };
    // Smallest possible pseudoprime if <=i primes tested as base
    //   in miller-rabin.  i starts at 1
    // See: http://oeis.org/A014233
-   static const std::vector<uint64_t> pseudoPrimes = {
+   static const std::vector<uint64_t> pseudoPrimes{
       2047,                1373653,             25326001,
       3215031751,          2152302898747,       3474749660383,
       341550071728321,     341550071728321,     3825123056546413051,
-      3825123056546413051, 3825123056546413051//, 318665857834031151167461,
+      3825123056546413051, 3825123056546413051//, 318665857834031151167461, cannot have 128bit constants
    };
 
    if (n == 2)
@@ -80,10 +78,10 @@ bool miller_rabin_test(const uint64_t& n)
    if(bit_test(n, 0) == 0)
       return false;  // n is even
 
-   uint64_t nm1 = n - 1;
-   uint64_t q(n-1), y;
+   big nm1 = n - 1;
+   big q(n-1), y;
 
-   unsigned k = lsb(q);
+   big k = lsb(q);
    q >>= k;
 
    //
@@ -94,7 +92,7 @@ bool miller_rabin_test(const uint64_t& n)
    for(unsigned i = 0; i < trials; ++i, ++x)
    {
       y = powm(*x, q, n);
-      unsigned j = 0;
+      big j = 0;
       while(true)
       {
          if(y == nm1)
@@ -112,5 +110,6 @@ bool miller_rabin_test(const uint64_t& n)
    }
    return true;  // Yeheh! probably prime.
 }
+
 } //custom namespace
 #endif

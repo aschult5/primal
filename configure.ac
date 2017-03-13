@@ -4,6 +4,7 @@ AM_INIT_AUTOMAKE
 
 AC_CONFIG_FILES([Makefile])
 AC_CONFIG_FILES([src/Makefile])
+AC_CONFIG_FILES([test/Makefile])
 
 # Checks programs
 AC_PROG_CXX
