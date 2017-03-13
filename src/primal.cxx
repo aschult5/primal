@@ -154,6 +154,7 @@ int main(int argc, char const *argv[])
          cout << "Batch mode" << endl;
 
          // Send request, retrieve results
+         results.resize(numbers.size());
          if (!c_p->sendRequest(numbers, results))
             return 3;
          printResult(numbers, results);
