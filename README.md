@@ -94,15 +94,20 @@ GCC does not support 128bit integer literals. It has to be input somehow, and us
 
 ## How it works
 ### Primality Testing
+See [A014233]
+
 Using the first n primes as bases for the Miller-Rabin test, you can determine whether a integer is prime or not
-with confidence, up to a certain value. The code does a binary search in the list of pseudoprimes (right-column below) See [A014233]
-2 -> 2047
-3 -> 1373653
-5 -> 25326001
-7 -> 3215031751
-...
-31 -> 3825123056546413051
-37 -> 318665857834031151167461
+with confidence, up to a certain value. The code does a binary search in the list of pseudoprimes for the integer to test to determine if it's eligible for the guaranteed algorithm.
+
+| n | Prime | Smallest Possible Pseudoprime if <=nth primes tested as base |
+| ------ | ------ | ------ |
+| 1 | 2 | 2047 |
+| 2 | 3 | 1373653 |
+| 3 | 5 | 25326001 |
+| 4 | 7 | 3215031751 |
+| ... | ...| ... |
+| 11 | 31 | 3825123056546413051 |
+| 12 | 37 | 318665857834031151167461 |
 
 By default, any integer [1-3825123056546413051) is guaranteed to be correctly identified as prime or composite.
 
