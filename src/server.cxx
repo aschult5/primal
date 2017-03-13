@@ -42,10 +42,10 @@ void connection::readHandler(const error_code& ec, size_t bytes)
    }
 }
 
-void connection::respond(bool result)
+void connection::respond(custom::primality result)
 {
    error_code ec;
-   response res{result ? uint8_t{1} : uint8_t{0}};
+   response res{result};
 
    write(sock, buffer(res), ec);
    check(ec);

@@ -28,11 +28,20 @@ DEALINGS IN THE SOFTWARE.
 #define __MILLER_RABIN_HPP
 
 #include <boost/multiprecision/integer.hpp>
+#include <boost/multiprecision/miller_rabin.hpp>
 #include <cstdint>
 #include <vector>
 #include <algorithm>
 
 namespace custom {
+
+enum class primality : uint8_t
+{
+   NOT,
+   PROBABLY,
+   GUARANTEED
+};
+
 namespace detail {
 
 template<class I, class J>
@@ -52,7 +61,7 @@ static unsigned int numTrials(I n, const std::vector<J> & pseudoPrimes)
 // Their use of a uniform_int_distribution precluded
 // my use of it in its original form.
 template<typename big>
-bool miller_rabin_test(const big& n)
+primality miller_rabin_test(const big& n)
 {
    using namespace boost::multiprecision;
  
@@ -74,9 +83,9 @@ bool miller_rabin_test(const big& n)
    };
 
    if (n == 2)
-      return true;  // Trivial special case.
+      return primality::GUARANTEED;  // Trivial special case.
    if(bit_test(n, 0) == 0)
-      return false;  // n is even
+      return primality::NOT;  // n is even
 
    big nm1 = n - 1;
    big q(n-1), y;
@@ -84,11 +93,19 @@ bool miller_rabin_test(const big& n)
    big k = lsb(q);
    q >>= k;
 
-   //
-   // Execute the trials:
-   //
-   auto trials = detail::numTrials(n, pseudoPrimes);
+   // Too large to guarantee prime
+   if (n >= pseudoPrimes.back())
+   {
+      if (boost::multiprecision::miller_rabin_test(n, 25))
+         return primality::PROBABLY;
+      else
+         return primality::NOT;
+   }
+
+   // We can guarantee prime if we use
+   // the first 'trials' primes as bases
    auto x = primes.begin();
+   auto trials = detail::numTrials(n, pseudoPrimes);
    for(unsigned i = 0; i < trials; ++i, ++x)
    {
       y = powm(*x, q, n);
@@ -101,14 +118,14 @@ bool miller_rabin_test(const big& n)
          {
             if(j == 0)
                break;
-            return false; // test failed
+            return primality::NOT; // test failed
          }
          if(++j == k)
-            return false; // failed
+            return primality::NOT; // failed
          y = powm(y, 2, n);
       }
    }
-   return true;  // Yeheh! probably prime.
+   return primality::GUARANTEED;  // Yeheh! prime.
 }
 
 } //custom namespace

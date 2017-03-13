@@ -35,7 +35,7 @@ public:
    boost::asio::ip::tcp::socket& socket() {return sock;}
 
 private:
-   void respond(bool);
+   void respond(custom::primality);
    void readHandler(const boost::system::error_code&, size_t);
 
    boost::asio::ip::tcp::socket sock;

@@ -10,19 +10,19 @@
 //
 TEST(MillerRabinTest, 32bitPrime)
 {
-   EXPECT_EQ(true, custom::miller_rabin_test(static_cast<uint32_t>(4294293967u)));
+   EXPECT_EQ(custom::primality::GUARANTEED, custom::miller_rabin_test(static_cast<uint32_t>(4294293967u)));
 }
 TEST(MillerRabinTest, 32bitComposite)
 {
-   EXPECT_EQ(false, custom::miller_rabin_test(static_cast<uint32_t>(4294293968u)));
+   EXPECT_EQ(custom::primality::NOT, custom::miller_rabin_test(static_cast<uint32_t>(4294293968u)));
 }
 TEST(MillerRabinTest, 64bitPrime)
 {
-   EXPECT_EQ(true, custom::miller_rabin_test(static_cast<uint64_t>(18446744073709551557u)));
+   EXPECT_EQ(custom::primality::PROBABLY, custom::miller_rabin_test(static_cast<uint64_t>(18446744073709551557u)));
 }
 TEST(MillerRabinTest, 64bitComposite)
 {
-   EXPECT_EQ(false, custom::miller_rabin_test(static_cast<uint64_t>(18446744073709551558u)));
+   EXPECT_EQ(custom::primality::NOT, custom::miller_rabin_test(static_cast<uint64_t>(18446744073709551558u)));
 }
 
 int main(int argc, char **argv) {

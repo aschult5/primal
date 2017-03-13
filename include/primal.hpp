@@ -5,12 +5,14 @@
 #include <cstdint>
 #include <boost/asio.hpp>
 
+#include "miller_rabin.hpp" //smelly, but need response value type for interface
+
 namespace primal
 {
 
 using big = uint64_t;
 using request = std::vector<big>;
-using response = std::vector<uint8_t>;
+using response = std::vector<custom::primality>;
 
 
 inline bool check(const boost::system::error_code& ec)

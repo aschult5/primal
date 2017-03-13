@@ -112,10 +112,18 @@ int main(int argc, char const *argv[])
       for (unsigned i=0; i<result.size(); ++i)
       {
          cout << numbers[i] << " is ";
-         if (result[i] == 1)
-            cout << "PRIME" << endl;
-         else
-            cout << "not prime" << endl;
+         switch(result[i])
+         {
+            case custom::primality::GUARANTEED:
+               cout << "PRIME" << endl;
+               break;
+            case custom::primality::PROBABLY:
+               cout << "probably PRIME" << endl;
+               break;
+            case custom::primality::NOT:
+               cout << "not prime" << endl;
+               break;
+         }
       }
    }
    else
