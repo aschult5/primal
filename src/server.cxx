@@ -68,6 +68,7 @@ void server::listen()
 {
    auto conn = std::make_shared<connection>(io_serv);
    acceptor.async_accept(conn->socket(), bind(&server::handleAccept, this, conn, _1));
+   std::cout << "Accepting new connections" << std::endl;
 }
 
 void server::handleAccept(std::shared_ptr<connection> newConnection, const error_code& ec)

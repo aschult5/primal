@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <vector>
 #include <cstdint>   //uint16_t
 #include <string>
@@ -46,6 +47,29 @@ static bool formRequest(po::variables_map vm, request& numbers)
    return !numbers.empty();
 }
 
+static void printResult(const request& numbers, const response& res)
+{
+   // Print result
+   cout << endl;
+   for (unsigned i=0; i<res.size(); ++i)
+   {
+      cout << numbers[i] << " is ";
+      switch(res[i])
+      {
+         case custom::primality::GUARANTEED:
+            cout << "PRIME" << endl;
+            break;
+         case custom::primality::PROBABLY:
+            cout << "probably PRIME" << endl;
+            break;
+         case custom::primality::NOT:
+            cout << "not prime" << endl;
+            break;
+      }
+   }
+   cout << endl;
+}
+
 int main(int argc, char const *argv[])
 {
    uint16_t port = 1734; // User Port for "Camber Corporation License Management"
@@ -87,21 +111,11 @@ int main(int argc, char const *argv[])
          ip = vm["ip"].as<string>();
       }
 
-      // Form request
-      request numbers;
-      if (!formRequest(vm, numbers))
-      {
-         cerr << desc << endl;
-         return 1;
-      }
-      response result(numbers.size());
-
-      // Send request, retrieve result
+      // Connect
+      unique_ptr<client> c_p;
       try
       {
-         client c(ip, port);
-         if (!c.sendRequest(numbers, result))
-            return 3;
+         c_p = make_unique<client>(ip, port);
       }
       catch (std::exception& e)
       {
@@ -109,22 +123,40 @@ int main(int argc, char const *argv[])
          return 2;
       }
 
-      // Print result
-      for (unsigned i=0; i<result.size(); ++i)
+      // Form request
+      request numbers;
+      response results;
+      if (!formRequest(vm, numbers))
       {
-         cout << numbers[i] << " is ";
-         switch(result[i])
+         cout << "Interactive mode" << endl;
+
+         cout << "Type white-space-separated integers to test, followed by enter:" << endl;
+         string line;
+         while (getline(cin, line))
          {
-            case custom::primality::GUARANTEED:
-               cout << "PRIME" << endl;
-               break;
-            case custom::primality::PROBABLY:
-               cout << "probably PRIME" << endl;
-               break;
-            case custom::primality::NOT:
-               cout << "not prime" << endl;
-               break;
+            // Get input
+            istringstream iss(line); 
+            big num;
+            while (iss >> num)
+               numbers.push_back(num);
+            results.resize(numbers.size());
+
+            // Send request, retrieve results
+            if (!c_p->sendRequest(numbers, results))
+               return 3;
+
+            printResult(numbers, results);
+            numbers.clear();
          }
+      }
+      else
+      {
+         cout << "Batch mode" << endl;
+
+         // Send request, retrieve results
+         if (!c_p->sendRequest(numbers, results))
+            return 3;
+         printResult(numbers, results);
       }
    }
    else
