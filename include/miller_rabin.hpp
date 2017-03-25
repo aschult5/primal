@@ -101,8 +101,6 @@ primality primality_test(const I& n, boost::multiprecision::uint128_t hugePseudo
 {
    using namespace boost::multiprecision;
  
-   // list of first n primes
-
    // Smallest possible pseudoprime if <=i primes tested as base
    //   in miller-rabin.  i starts at 1
    // See: http://oeis.org/A014233
