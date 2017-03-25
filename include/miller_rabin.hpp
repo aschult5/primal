@@ -28,7 +28,9 @@ enum class primality : uint8_t
 namespace detail {
 
 template<class I, class J,
-   typename = std::enable_if<sizeof(J) >= sizeof(I) > >
+   typename = std::enable_if< std::is_unsigned<I>::value &&
+                              std::is_unsigned<J>::value &&
+                              sizeof(J) >= sizeof(I) > >
 static unsigned int numTrials(const I& n, const std::vector<J> & pseudoPrimes)
 {
    // Binary search for first pseudoprime larger than n.
@@ -45,7 +47,7 @@ static unsigned int numTrials(const I& n, const std::vector<J> & pseudoPrimes)
 // Their use of a uniform_int_distribution precluded
 // my use of it in its original form.
 // I want to specify the bases used.
-template<typename I>
+template< typename I, typename = std::enable_if<std::is_unsigned<I>::value> >
 primality miller_rabin_test(const I& n, unsigned trials)
 {
    using namespace boost::multiprecision;
@@ -96,7 +98,7 @@ primality miller_rabin_test(const I& n, unsigned trials)
    return primality::GUARANTEED;
 }
 
-template<typename I>
+template< typename I, typename = std::enable_if<std::is_unsigned<I>::value> >
 primality primality_test(const I& n, boost::multiprecision::uint128_t hugePseudoprime=0)
 {
    using namespace boost::multiprecision;
