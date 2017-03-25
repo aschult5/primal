@@ -38,7 +38,7 @@ void connection::readHandler(const error_code& ec, size_t bytes)
    if (!check(ec) && bytes > 0)
    {
       // Determine if the input is prime.
-      respond(custom::primality_test(number.front(), server::hugePseudoprime));
+      respond(custom::primality_test(number.front()));
 
       // clients may send multiple requests
       handleRequest(); 
@@ -54,12 +54,9 @@ void connection::respond(custom::primality result)
    check(ec);
 }
 
-uint128_t server::hugePseudoprime=0;
-
-server::server(uint16_t port, uint128_t pseudoprime) :
+server::server(uint16_t port) :
    acceptor(io_serv, ip::tcp::endpoint(ip::tcp::v4(), port))
 {
-   hugePseudoprime = pseudoprime;
    listen();
    io_serv.run();
 }

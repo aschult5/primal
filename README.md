@@ -47,7 +47,7 @@ If you pass garbage values, you'll get garbage back, but it shouldn't crash.
 
 ### 64-bit Example
 ```sh
-./primal --pseudoprime 318665857834031151167461
+./primal
 ./primal -n 18446744073709551557 #largest 64-bit prime
 Batch mode
 
@@ -56,7 +56,7 @@ Batch mode
 
 ### 128-bit Example
 ```sh
-./primal --pseudoprime 318665857834031151167461
+./primal
 ./primal -n 58760334599773844685608985979864046177 #128 bit prime
 Batch mode
 
@@ -65,7 +65,7 @@ Batch mode
 
 ### Interactive Example
 ```sh
-./primal --pseudoprime 318665857834031151167461
+./primal
 ./primal --ip 127.0.0.1
 Interactive mode
 Type white-space-separated integers to test, followed by enter:
@@ -79,9 +79,6 @@ Type white-space-separated integers to test, followed by enter:
 6 is not prime
 7 is PRIME
 ```
-
-### Why am I passing a magic number?
-GCC does not support 128bit integer literals. It has to be input somehow, and user-input is the easiest. Don't betray primal's trust.
 
 ## Testing
 googletest is used for unit testing. `make check` or `nix-build --arg doCheck true` will build and run gtest.
@@ -110,13 +107,10 @@ otherwise it's passed onto boost::multiprecision::miller_rabin_test with 25 tria
 | 11 | 31 | 3825123056546413051 |
 | 12 | 37 | 318665857834031151167461 |
 
-By default, any integer [1-3825123056546413051) is guaranteed to be correctly identified as prime or composite.
+By default, any integer [1-318665857834031151167461) is guaranteed to be correctly identified as prime or composite.
 
-If you supply the 37's pseudoprime to the server instance,
-the guaranteed range improves to [1-318665857834031151167461)
-
-Note that 64-bit integers are entirely covered by the second range.
-Any integer outside those ranges will be identified as probably prime or composite.
+Note that 64-bit integers are entirely covered.
+Any integer outside that range will be identified as probably prime or composite.
 "Probably prime" is an effect of the [Miller-Rabin Primality Test].
 Note: M-R can have false positives but not false negatives.
 

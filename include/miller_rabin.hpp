@@ -13,6 +13,8 @@
 #include <cstdint>
 #include <vector>
 #include <algorithm>
+#include <iostream>
+#include <mutex>
 
 
 namespace custom {
@@ -98,24 +100,27 @@ primality miller_rabin_test(const I& n, unsigned trials)
    return primality::GUARANTEED;
 }
 
+
 template< typename I, typename = std::enable_if<std::is_unsigned<I>::value> >
-primality primality_test(const I& n, boost::multiprecision::uint128_t hugePseudoprime=0)
+primality primality_test(const I& n)
 {
    using namespace boost::multiprecision;
+   using uint128_t=boost::multiprecision::uint128_t;
  
    // Smallest possible pseudoprime if <=i primes tested as base
    //   in miller-rabin.  i starts at 1
    // See: http://oeis.org/A014233
-   static std::vector<boost::multiprecision::uint128_t> pseudoPrimes{
+   static std::vector<uint128_t> pseudoPrimes{
       2047,                1373653,             25326001,
       3215031751,          2152302898747,       3474749660383,
       341550071728321,     341550071728321,     3825123056546413051,
       3825123056546413051, 3825123056546413051 //, 318665857834031151167461, cannot have 128bit literals
    };
-   if (hugePseudoprime > pseudoPrimes.back())
-   {
-      pseudoPrimes.push_back(hugePseudoprime);
-   }
+   static std::once_flag add128bitPsuedoPrime;
+   std::call_once(add128bitPsuedoPrime,
+                  [](uint128_t p){pseudoPrimes.push_back(p);}, //318665857834031151167461
+                  uint128_t{3186658578340u}*uint128_t{100000000000u}+uint128_t{31151167461u} ); 
+
 
    if (n <= 1)
       return primality::NOT;
