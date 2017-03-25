@@ -83,6 +83,15 @@ Type white-space-separated integers to test, followed by enter:
 ## Testing
 googletest is used for unit testing. `make check` or `nix-build --arg doCheck true` will build and run gtest.
 
+Docker is used for end-to-end testing.
+```sh
+sudo docker run -itd --expose 1734 --name primal_server primal -
+sudo docker run -it --expose 1734 primal --ip $(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' primal_server)
+sudo docker run -it --expose 1734 primal --ip $(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' primal_server)
+sudo docker run -it --expose 1734 primal --ip $(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' primal_server)
+...
+```
+
 Batch mode allows you to specify many integers to test in one connection.
 Inputs to batch mode are either a file or an integer passed on startup.
 
